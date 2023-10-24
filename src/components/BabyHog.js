@@ -1,32 +1,58 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import normalBaby from "../assets/unadulterated-hoglette.png";
 import SunBaby from "../assets/sun-eyes.png";
 import BlueBaby from "../assets/blue-eyes.png";
 import GlowingBaby from "../assets/glowing-eyes.png";
 
-// is there a way we could associate eye color string values with images?
-// perhaps so we could do something along the lines of `eyeColorMapper['blue'] and get back the right image?`
-
 function BabyHog(props) {
+  const [img, setImg] = useState(normalBaby);
+  const [weight,setWeight] = useState(10);
+
   function handleChangeWeight(e) {
-    // how can we reuse this for both buttons?
-    // perhaps something with e.target.name === "+"
+    if (e.target.name === "+"){
+      setWeight(prevState => prevState + 10)
+    }else {
+      setWeight(prevState => prevState - 10)
+    }
+  }
+
+  function handleChangeEyeColor() {
+    return setImg((img) => {
+      if (props.eyeColor === "sun") {
+        setImg(SunBaby);
+      } else if (props.eyeColor === "blue") {
+        setImg(BlueBaby);
+      } else if (props.eyeColor === "glowing") {
+        setImg(GlowingBaby);
+      } else{
+        setImg(normalBaby);
+      }
+    });
+  }
+
+  useEffect(() => {
+    handleChangeEyeColor();
+  }, [props.eyeColor]);
+  
+  const styleLi = {
+    border: `1px dashed black`,
+    flexBasis: '33.333333%'
   }
 
   return (
-    <li className="hogbabies">
-      <h1>Name</h1>
-      <h3>Weight:</h3>
-      <h3>Hobby:</h3>
-      <h4>Eye Color:</h4>
+    <li className="hogbabies" style={styleLi} >
+      <h1>Name: <br/>{props.name}</h1>
+      <h3>Weight: {weight > 1000 ? weight / 1000 + ' Tons': weight + ' Kg'}</h3>
+      <h3>Hobby: {props.hobby}</h3>
+      <h4>Eye Color: {props.eyeColor}</h4>
 
-      <button name="+">Increase Weight</button>
-      <button name="-">Decrease Weight</button>
+      <button name="+" onClick={handleChangeWeight}>Increase Weight</button>
+      <button name="-" onClick={handleChangeWeight}>Decrease Weight</button>
 
       <div className="hb-wrap">
         <img
-          src={normalBaby}
-          style={{ height: "200px" }}
+          src={img}
+          style={{ margin:'1rem',height: `${ weight > 100 ? weight / 10 : weight * 2 }px` }}
           alt="MasterBlasterJrJr"
         />
       </div>
